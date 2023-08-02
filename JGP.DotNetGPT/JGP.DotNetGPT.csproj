@@ -1,0 +1,36 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net7.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <Description>Adds models and clients for use with the ChatGPT API</Description>
+        <Authors>Joshua Gwynn-Palmer</Authors>
+        <Copyright>Joshua Gwynn-Palmer</Copyright>
+        <Version>1.0.0</Version>
+        <PackageId>JGP.DotNetGPT</PackageId>
+        <PackageDescription>Adds models and clients for use with the ChatGPT API</PackageDescription>
+        <RepositoryUrl>https://github.com/gwynnPalmer/JGP.DotNetGPT</RepositoryUrl>
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <Folder Include="Clients\"/>
+        <Folder Include="Models\"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="SharpToken" Version="1.2.2"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <Content Include="..\README.md" Pack="True" PackagePath="\">
+            <Link>README.md</Link>
+        </Content>
+        <None Include="..\LICENSE" Pack="True" PackagePath="\">
+            <Link>LICENSE</Link>
+        </None>
+    </ItemGroup>
+
+
+</Project>
