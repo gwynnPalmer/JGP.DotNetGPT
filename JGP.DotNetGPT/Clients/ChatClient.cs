@@ -153,7 +153,6 @@ public class ChatClient : IChatClient
     ///     Creates the api key
     /// </summary>
     /// <param name="apiKey">The api key</param>
-    /// <param name="baseUrl">The base url</param>
     /// <param name="model">The model</param>
     /// <returns>ChatClient</returns>
     public static ChatClient Create(string apiKey, string? model = null)
