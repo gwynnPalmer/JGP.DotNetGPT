@@ -14,6 +14,7 @@
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
         <PackageReadmeFile>.\README.md</PackageReadmeFile>
+        <PackageLicenseFile>.\LICENSE.txt</PackageLicenseFile>
     </PropertyGroup>
 
     <ItemGroup>
@@ -22,14 +23,13 @@
     </ItemGroup>
 
     <ItemGroup>
-        <None Include="..\LICENSE" Pack="True" PackagePath="\" />
-        <None Include="..\README.md" Pack="True" PackagePath="\" />
+        <None Include="..\LICENSE.txt" Pack="True" PackagePath="\" />
+        <None Include="..\README.md" Pack="True" PackagePath="\"/>
     </ItemGroup>
 
     <ItemGroup>
         <PackageReference Include="SharpToken" Version="1.2.2"/>
     </ItemGroup>
-
 
 
 </Project>

@@ -5,7 +5,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SolutionItems", "SolutionItems", "{D555ADA6-312E-43BA-9635-A604C34B8127}"
 	ProjectSection(SolutionItems) = preProject
 		.gitignore = .gitignore
-		LICENSE = LICENSE
+		LICENSE.txt = LICENSE.txt
 		README.md = README.md
 		.github\workflows\nuget-build.yml = .github\workflows\nuget-build.yml
 		.github\workflows\nuget-prerelease.yml = .github\workflows\nuget-prerelease.yml
