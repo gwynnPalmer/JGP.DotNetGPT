@@ -7,7 +7,7 @@
         <Description>Adds models and clients for use with the ChatGPT API</Description>
         <Authors>Joshua Gwynn-Palmer</Authors>
         <Copyright>Joshua Gwynn-Palmer</Copyright>
-        <Version>1.0.1</Version>
+        <Version>1.0.2</Version>
         <PackageId>JGP.DotNetGPT</PackageId>
         <PackageDescription>Adds models and clients for use with the ChatGPT API</PackageDescription>
         <RepositoryUrl>https://github.com/gwynnPalmer/JGP.DotNetGPT</RepositoryUrl>

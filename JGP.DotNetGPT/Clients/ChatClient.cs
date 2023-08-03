@@ -100,6 +100,11 @@ public class ChatClient : IChatClient
     private readonly string _chatUrl;
 
     /// <summary>
+    ///     The context limit
+    /// </summary>
+    private readonly int _contextLimit;
+
+    /// <summary>
     ///     The model
     /// </summary>
     private readonly string _model;
@@ -132,6 +137,17 @@ public class ChatClient : IChatClient
         return this;
     }
 
+    /// <summary>
+    ///     Sets the client timeout using the specified seconds
+    /// </summary>
+    /// <param name="seconds">The seconds</param>
+    /// <returns>ChatClient</returns>
+    public ChatClient SetClientTimeout(int seconds)
+    {
+        _httpClient.Timeout = TimeSpan.FromSeconds(seconds);
+        return this;
+    }
+
     #region CONSTRUCTORS
 
     /// <summary>
@@ -145,8 +161,10 @@ public class ChatClient : IChatClient
         _chatUrl = chatUrl;
         _apiKey = apiKey;
         _model = string.IsNullOrEmpty(model)
-            ? "gpt-3.5-turbo-0613"
+            ? ModelConstants.GPT35Turbo16k
             : model;
+
+        _contextLimit = GetContextLimit(model);
     }
 
     /// <summary>
@@ -305,7 +323,7 @@ public class ChatClient : IChatClient
             .Aggregate(new StringBuilder(), (sb, message) => sb.Append(message.Content))
             .ToString();
 
-        while (_encoding.Encode(contextString).Count > 3500)
+        while (_encoding.Encode(contextString).Count > _contextLimit)
         {
             Context.RemoveAt(0);
             contextString = Context
@@ -349,6 +367,27 @@ public class ChatClient : IChatClient
         }
 
         return request;
+    }
+
+    /// <summary>
+    ///     Gets the context limit using the specified model
+    /// </summary>
+    /// <param name="model">The model</param>
+    /// <returns>int</returns>
+    private static int GetContextLimit(string model)
+    {
+        return model switch
+        {
+            ModelConstants.GPT4 => 7500,
+            ModelConstants.GPT40613 => 7500,
+            ModelConstants.GPT432k => 31050,
+            ModelConstants.GPT432k0613 => 31500,
+            ModelConstants.GPT35Turbo => 3500,
+            ModelConstants.GPT35Turbo16k => 15500,
+            ModelConstants.GPT35Turbo0613 => 3500,
+            ModelConstants.GPT35Turbo16k0613 => 15500,
+            _ => 3500
+        };
     }
 
     #endregion
