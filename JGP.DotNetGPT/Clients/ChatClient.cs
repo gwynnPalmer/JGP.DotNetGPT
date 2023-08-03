@@ -71,9 +71,9 @@ public class ChatClient : IChatClient
     /// <summary>
     ///     The from seconds
     /// </summary>
-    private static readonly HttpClient _httpClient = new()
+    private HttpClient _httpClient = new()
     {
-        Timeout = TimeSpan.FromSeconds(30)
+        Timeout = TimeSpan.FromSeconds(60)
     };
 
     /// <summary>
@@ -85,9 +85,9 @@ public class ChatClient : IChatClient
     };
 
     /// <summary>
-    ///     The get encoding
+    ///     The GPT encoding token counter
     /// </summary>
-    private static readonly GptEncoding _encoding = GptEncoding.GetEncoding("cl100k_base");
+    private static readonly GptEncoding TokenCounter = GptEncoding.GetEncoding("cl100k_base");
 
     /// <summary>
     ///     The api key
@@ -144,7 +144,11 @@ public class ChatClient : IChatClient
     /// <returns>ChatClient</returns>
     public ChatClient SetClientTimeout(int seconds)
     {
-        _httpClient.Timeout = TimeSpan.FromSeconds(seconds);
+        _httpClient = new()
+        {
+            Timeout = TimeSpan.FromSeconds(seconds)
+        };
+
         return this;
     }
 
@@ -323,7 +327,7 @@ public class ChatClient : IChatClient
             .Aggregate(new StringBuilder(), (sb, message) => sb.Append(message.Content))
             .ToString();
 
-        while (_encoding.Encode(contextString).Count > _contextLimit)
+        while (TokenCounter.Encode(contextString).Count > _contextLimit)
         {
             Context.RemoveAt(0);
             contextString = Context

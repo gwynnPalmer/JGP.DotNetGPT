@@ -1,10 +1,10 @@
-name: NuGet Build
+name: NuGet Pre-Release Build
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "develop" ]
   pull_request:
-    branches: [ "main" ]
+    branches: [ "develop" ]
 
 jobs:
   build:
@@ -37,8 +37,12 @@ jobs:
       - name: Run tests
         run: dotnet test /p:Configuration=$BUILD_CONFIG --no-restore --no-build --verbosity normal
 
+      - name: Extract version from .csproj
+        id: get_version
+        run: echo "VERSION_NUMBER=$(grep -oP '<Version>\K(.*?)(?=<)' **/*JGP.DotNetGPT.csproj)" >> $GITHUB_ENV
+
       - name: Pack project
-        run: dotnet pack **/*JGP.DotNetGPT.csproj --configuration $BUILD_CONFIG --include-symbols -p:SymbolPackageFormat=snupkg -o .
+        run: dotnet pack **/*JGP.DotNetGPT.csproj --configuration $BUILD_CONFIG --include-symbols -p:SymbolPackageFormat=snupkg -p:Version=${{ env.VERSION_NUMBER }}-preview -o .
 
       - name: Publish package to NuGet
         run: dotnet nuget push *.nupkg --source https://api.nuget.org/v3/index.json --api-key ${{secrets.NUGET_API_KEY}} --skip-duplicate
