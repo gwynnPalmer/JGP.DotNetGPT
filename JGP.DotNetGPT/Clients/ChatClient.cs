@@ -327,7 +327,14 @@ public class ChatClient : IChatClient
         // Find any messages that are longer than the context limit and remove them
         if (Context.Exists(message => TokenCounter.Encode(message.Content).Count > _contextLimit))
         {
-            Context.RemoveAll(message => TokenCounter.Encode(message.Content).Count > _contextLimit);
+            for (var index = 0; index < Context.Count; index++)
+            {
+                var message = Context[index];
+                if (TokenCounter.Encode(message.Content).Count > _contextLimit)
+                {
+                    message.Content = "Content removed due to exceeding the context limit.";
+                }
+            }
         }
 
         var contextString = Context
