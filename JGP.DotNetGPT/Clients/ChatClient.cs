@@ -1,6 +1,7 @@
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using JGP.DotNetGPT.Builders;
 using JGP.DotNetGPT.Models;
 using SharpToken;
 
@@ -69,14 +70,6 @@ public interface IChatClient
 public class ChatClient : IChatClient
 {
     /// <summary>
-    ///     The from seconds
-    /// </summary>
-    private HttpClient _httpClient = new()
-    {
-        Timeout = TimeSpan.FromSeconds(60)
-    };
-
-    /// <summary>
     ///     The when writing null
     /// </summary>
     private static readonly JsonSerializerOptions Options = new()
@@ -105,9 +98,22 @@ public class ChatClient : IChatClient
     private readonly int _contextLimit;
 
     /// <summary>
+    ///     The deployment type
+    /// </summary>
+    private readonly DeploymentType _deploymentType;
+
+    /// <summary>
     ///     The model
     /// </summary>
     private readonly string _model;
+
+    /// <summary>
+    ///     The from seconds
+    /// </summary>
+    private HttpClient _httpClient = new()
+    {
+        Timeout = TimeSpan.FromSeconds(60)
+    };
 
     /// <summary>
     ///     Gets the value of the context
@@ -144,7 +150,7 @@ public class ChatClient : IChatClient
     /// <returns>ChatClient</returns>
     public ChatClient SetClientTimeout(int seconds)
     {
-        _httpClient = new()
+        _httpClient = new HttpClient
         {
             Timeout = TimeSpan.FromSeconds(seconds)
         };
@@ -160,7 +166,8 @@ public class ChatClient : IChatClient
     /// <param name="chatUrl">The base url</param>
     /// <param name="apiKey">The api key</param>
     /// <param name="model">The model</param>
-    private ChatClient(string chatUrl, string apiKey, string? model)
+    private ChatClient(string chatUrl, string apiKey, string? model,
+        DeploymentType deploymentType = DeploymentType.Direct)
     {
         _chatUrl = chatUrl;
         _apiKey = apiKey;
@@ -169,6 +176,7 @@ public class ChatClient : IChatClient
             : model;
 
         _contextLimit = GetContextLimit(model);
+        _deploymentType = deploymentType;
     }
 
     /// <summary>
@@ -177,9 +185,33 @@ public class ChatClient : IChatClient
     /// <param name="apiKey">The api key</param>
     /// <param name="model">The model</param>
     /// <returns>ChatClient</returns>
+    [Obsolete(message:"This method is deprecated, please use CreateDirectDeployment instead")]
     public static ChatClient Create(string apiKey, string? model = null)
     {
         return new ChatClient("https://api.openai.com/v1/chat/completions", apiKey, model);
+    }
+
+    /// <summary>
+    ///     Creates the api key
+    /// </summary>
+    /// <param name="apiKey">The api key</param>
+    /// <param name="model">The model</param>
+    /// <returns>ChatClient</returns>
+    public static ChatClient CreateDirectDeployment(string apiKey, string? model = null)
+    {
+        return new ChatClient("https://api.openai.com/v1/chat/completions", apiKey, model, DeploymentType.Direct);
+    }
+
+    /// <summary>
+    ///     Creates the azure deployment using the specified api key
+    /// </summary>
+    /// <param name="chatUrl">The chat url</param>
+    /// <param name="apiKey">The api key</param>
+    /// <param name="model">The model</param>
+    /// <returns>ChatClient</returns>
+    public static ChatClient CreateAzureDeployment(string chatUrl, string apiKey, string? model = null)
+    {
+        return new ChatClient(chatUrl, apiKey, model, DeploymentType.Azure);
     }
 
     #endregion
@@ -246,16 +278,9 @@ public class ChatClient : IChatClient
 
         var json = JsonSerializer.Serialize(requestModel, Options);
 
-        using var chatRequest = new HttpRequestMessage(HttpMethod.Post, _chatUrl)
-        {
-            Content = new StringContent(json, Encoding.UTF8, "application/json"),
-            Headers =
-            {
-                { "Authorization", "Bearer " + _apiKey }
-            }
-        };
-
+        using var chatRequest = RequestBuilder.BuildChatRequest(_chatUrl, _apiKey, json, _deploymentType);
         using var chatResponse = await _httpClient.SendAsync(chatRequest);
+
         var responseContent = await chatResponse.Content.ReadAsStringAsync();
         var response = JsonSerializer.Deserialize<ResponseModel>(responseContent, Options);
 
@@ -352,7 +377,7 @@ public class ChatClient : IChatClient
         //TODO: this should ideally never happen, we should prevent this earlier.
         if (Context.Count == 0)
         {
-            Context.Add(new Message()
+            Context.Add(new Message
             {
                 Content = "The chat context was reset due to an error.",
                 Role = ChatConstants.SystemRole

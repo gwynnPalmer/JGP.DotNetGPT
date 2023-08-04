@@ -18,7 +18,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <Folder Include="Clients\"/>
         <Folder Include="Models\"/>
     </ItemGroup>
 
