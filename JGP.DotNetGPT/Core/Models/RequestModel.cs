@@ -101,6 +101,7 @@ public class Message
     ///     Gets the value of the has function call
     /// </summary>
     /// <value>Interop+BOOL</value>
+    [JsonIgnore]
     public bool HasFunctionCall => FunctionCall != null;
 
     /// <summary>

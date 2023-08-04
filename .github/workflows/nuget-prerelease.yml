@@ -41,12 +41,8 @@ jobs:
         id: get_version
         run: echo "VERSION_NUMBER=$(grep -oP '<Version>\K(.*?)(?=<)' **/*JGP.DotNetGPT.csproj)" >> $GITHUB_ENV
 
-      - name: Get current date
-        id: date
-        run: echo "CURRENT_DATE=$(date +'%Y%m%d')" >> $GITHUB_ENV
-
       - name: Pack project
-        run: dotnet pack **/*JGP.DotNetGPT.csproj --configuration $BUILD_CONFIG --include-symbols -p:SymbolPackageFormat=snupkg -p:Version=${{ env.VERSION_NUMBER }}-preview-${{ env.CURRENT_DATE }}-${{ github.run_number }} -o .
+        run: dotnet pack **/*JGP.DotNetGPT.csproj --configuration $BUILD_CONFIG --include-symbols -p:SymbolPackageFormat=snupkg -p:Version=${{ env.VERSION_NUMBER }}-preview-${{ github.run_number }} -o .
 
       - name: Publish package to NuGet
         run: dotnet nuget push *.nupkg --source https://api.nuget.org/v3/index.json --api-key ${{secrets.NUGET_API_KEY}} --skip-duplicate
