@@ -102,15 +102,20 @@ public class ChatContext : IChatContext
         while (tokenCount < UpperTokenLimit && index >= 0)
         {
             var message = _messageHistory[index];
-            if (MessageExists(context, message)) break;
 
-            var messageLength = TokenCounter.Encode(JsonSerializer.Serialize(message)).Count;
-            if (messageLength == 0 || messageLength > UpperTokenLimit) message.Content = "Truncated message";
+            if (!string.IsNullOrEmpty(message.Content))
+            {
+                if (MessageExists(context, message)) break;
 
-            if (tokenCount + messageLength > UpperTokenLimit) break;
-            context.Insert(0, message);
+                var messageLength = TokenCounter.Encode(JsonSerializer.Serialize(message)).Count;
+                if (messageLength == 0 || messageLength > UpperTokenLimit) message.Content = "Truncated message";
 
-            tokenCount += messageLength;
+                if (tokenCount + messageLength > UpperTokenLimit) break;
+                context.Insert(0, message);
+
+                tokenCount += messageLength;
+            }
+
             index--;
         }
 
