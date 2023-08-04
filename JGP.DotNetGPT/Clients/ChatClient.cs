@@ -323,6 +323,13 @@ public class ChatClient : IChatClient
         uniqueMessages.Reverse();
         Context = uniqueMessages;
 
+        //TODO: some kind of trim method. This is a hack.
+        // Find any messages that are longer than the context limit and remove them
+        if (Context.Exists(message => TokenCounter.Encode(message.Content).Count > _contextLimit))
+        {
+            Context.RemoveAll(message => TokenCounter.Encode(message.Content).Count > _contextLimit);
+        }
+
         var contextString = Context
             .Aggregate(new StringBuilder(), (sb, message) => sb.Append(message.Content))
             .ToString();
@@ -333,6 +340,16 @@ public class ChatClient : IChatClient
             contextString = Context
                 .Aggregate(new StringBuilder(), (sb, message) => sb.Append(message.Content))
                 .ToString();
+        }
+
+        //TODO: this should ideally never happen, we should prevent this earlier.
+        if (Context.Count == 0)
+        {
+            Context.Add(new Message()
+            {
+                Content = "The chat context was reset due to an error.",
+                Role = ChatConstants.SystemRole
+            });
         }
     }
 
