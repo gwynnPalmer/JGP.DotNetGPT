@@ -4,7 +4,6 @@ using JGP.DotNetGPT.Builders;
 using JGP.DotNetGPT.Core;
 using JGP.DotNetGPT.Core.Constants;
 using JGP.DotNetGPT.Core.Models;
-using SharpToken;
 
 namespace JGP.DotNetGPT.Clients;
 
@@ -107,18 +106,6 @@ public class ChatClient : IChatClient
     };
 
     /// <summary>
-    ///     Gets or sets the value of the context
-    /// </summary>
-    /// <value>IChatContext</value>
-    public IChatContext Context { get; }
-
-    /// <summary>
-    ///     Gets the value of the functions
-    /// </summary>
-    /// <value>List&lt;Function&gt;</value>
-    public List<Function> Functions { get; } = new();
-
-    /// <summary>
     ///     Initializes a new instance of the <see cref="ChatClient" /> class
     /// </summary>
     /// <param name="chatUrl">The base url</param>
@@ -136,6 +123,36 @@ public class ChatClient : IChatClient
         Context = new ChatContext(_model);
 
         _deploymentType = deploymentType;
+    }
+
+    /// <summary>
+    ///     Gets or sets the value of the context
+    /// </summary>
+    /// <value>IChatContext</value>
+    public IChatContext Context { get; }
+
+    /// <summary>
+    ///     Gets the value of the functions
+    /// </summary>
+    /// <value>List&lt;Function&gt;</value>
+    public List<Function> Functions { get; } = new();
+
+    /// <summary>
+    ///     Appends the system message using the specified message
+    /// </summary>
+    /// <param name="message">The message</param>
+    /// <returns>ChatClient</returns>
+    public ChatClient AppendSystemMessage(string message)
+    {
+        var systemMessage = new Message
+        {
+            Role = ChatConstants.SystemRole,
+            Content = message
+        };
+
+        Context.AppendMessage(systemMessage);
+
+        return this;
     }
 
     /// <summary>
@@ -174,24 +191,6 @@ public class ChatClient : IChatClient
     }
 
     /// <summary>
-    ///     Appends the system message using the specified message
-    /// </summary>
-    /// <param name="message">The message</param>
-    /// <returns>ChatClient</returns>
-    public ChatClient AppendSystemMessage(string message)
-    {
-        var systemMessage = new Message
-        {
-            Role = ChatConstants.SystemRole,
-            Content = message
-        };
-
-        Context.AppendMessage(systemMessage);
-
-        return this;
-    }
-
-    /// <summary>
     ///     Sets the client timeout using the specified seconds
     /// </summary>
     /// <param name="seconds">The seconds</param>
@@ -205,6 +204,51 @@ public class ChatClient : IChatClient
 
         return this;
     }
+
+    #region HELPER METHODS
+
+    /// <summary>
+    ///     Builds the request using the specified prompt
+    /// </summary>
+    /// <param name="prompt">The prompt</param>
+    /// <param name="systemMessage">The system message</param>
+    /// <returns>The request</returns>
+    private RequestModel BuildRequest(string? prompt = null, string? systemMessage = null)
+    {
+        if (!string.IsNullOrWhiteSpace(prompt))
+        {
+            var message = new Message
+            {
+                Role = ChatConstants.UserRole,
+                Content = prompt
+            };
+
+            Context.AppendMessage(message);
+        }
+
+        if (!string.IsNullOrWhiteSpace(systemMessage))
+        {
+            var message = new Message
+            {
+                Role = ChatConstants.SystemRole,
+                Content = systemMessage
+            };
+
+            Context.AppendMessage(message);
+        }
+
+        var request = new RequestModel
+        {
+            Model = _model,
+            Messages = Context.GetSafeContext()
+        };
+
+        if (Functions.Count > 0) request.AppendFunctions(Functions);
+
+        return request;
+    }
+
+    #endregion
 
     #region FUNCTIONS
 
@@ -318,51 +362,6 @@ public class ChatClient : IChatClient
         var request = BuildRequest();
 
         return await SubmitAsync(request);
-    }
-
-    #endregion
-
-    #region HELPER METHODS
-
-    /// <summary>
-    ///     Builds the request using the specified prompt
-    /// </summary>
-    /// <param name="prompt">The prompt</param>
-    /// <param name="systemMessage">The system message</param>
-    /// <returns>The request</returns>
-    private RequestModel BuildRequest(string? prompt = null, string? systemMessage = null)
-    {
-        if (!string.IsNullOrWhiteSpace(prompt))
-        {
-            var message = new Message
-            {
-                Role = ChatConstants.UserRole,
-                Content = prompt
-            };
-
-            Context.AppendMessage(message);
-        }
-
-        if (!string.IsNullOrWhiteSpace(systemMessage))
-        {
-            var message = new Message
-            {
-                Role = ChatConstants.SystemRole,
-                Content = systemMessage
-            };
-
-            Context.AppendMessage(message);
-        }
-
-        var request = new RequestModel
-        {
-            Model = _model,
-            Messages = Context.GetSafeContext()
-        };
-
-        if (Functions.Count > 0) request.AppendFunctions(Functions);
-
-        return request;
     }
 
     #endregion

@@ -1,5 +1,4 @@
 using System.Text;
-using JGP.DotNetGPT.Clients;
 using JGP.DotNetGPT.Core;
 
 namespace JGP.DotNetGPT.Builders;

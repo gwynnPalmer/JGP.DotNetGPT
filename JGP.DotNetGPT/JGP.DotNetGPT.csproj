@@ -18,7 +18,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <None Include="..\LICENSE.txt" Pack="True" PackagePath="\" />
+        <None Include="..\LICENSE.txt" Pack="True" PackagePath="\"/>
         <None Include="..\README.md" Pack="True" PackagePath="\"/>
     </ItemGroup>
 
@@ -26,9 +26,5 @@
         <PackageReference Include="SharpToken" Version="1.2.2"/>
     </ItemGroup>
 
-
-    <ItemGroup>
-      <ProjectReference Include="..\JGP.DotNetGPT.Core\JGP.DotNetGPT.Core.csproj" />
-    </ItemGroup>
 
 </Project>

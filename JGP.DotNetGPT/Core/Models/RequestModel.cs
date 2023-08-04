@@ -118,7 +118,7 @@ public class Message
                && Role == message.Role
                && Content == message.Content
                && Name == message.Name
-               && (FunctionCall?.Equals(message.FunctionCall) == true);
+               && FunctionCall?.Equals(message.FunctionCall) == true;
     }
 }
 
