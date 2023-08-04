@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace JGP.DotNetGPT.Models;
+namespace JGP.DotNetGPT.Core.Models;
 
 /// <summary>
 ///     Class whisper response model

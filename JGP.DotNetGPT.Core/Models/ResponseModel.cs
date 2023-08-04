@@ -1,7 +1,7 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace JGP.DotNetGPT.Models;
+namespace JGP.DotNetGPT.Core.Models;
 
 /// <summary>
 ///     Class response model
@@ -93,7 +93,7 @@ public class Choice
     /// </summary>
     /// <value>ResponseMessage</value>
     [JsonPropertyName("message")]
-    public ResponseMessage? Message { get; set; }
+    public Message? Message { get; set; }
 
     /// <summary>
     ///     Gets or sets the value of the finish reason
@@ -101,26 +101,6 @@ public class Choice
     /// <value>System.String</value>
     [JsonPropertyName("finish_reason")]
     public string? FinishReason { get; set; }
-}
-
-/// <summary>
-///     Class response message
-/// </summary>
-/// <seealso cref="Message" />
-public class ResponseMessage : Message
-{
-    /// <summary>
-    ///     Gets or sets the value of the function call
-    /// </summary>
-    /// <value>System.Nullable&lt;FunctionCall&gt;</value>
-    [JsonPropertyName("function_call")]
-    public FunctionCall? FunctionCall { get; set; }
-
-    /// <summary>
-    ///     Gets the value of the has function call
-    /// </summary>
-    /// <value>Interop+BOOL</value>
-    public bool HasFunctionCall => FunctionCall != null;
 }
 
 /// <summary>
@@ -151,6 +131,22 @@ public class FunctionCall
     public T? ToFunctionParameters<T>(JsonSerializerOptions? options = null) where T : class
     {
         return JsonSerializer.Deserialize<T>(Arguments, options);
+    }
+
+    /// <summary>
+    ///     Describes whether this instance equals
+    /// </summary>
+    /// <param name="obj">The obj</param>
+    /// <returns>Interop+BOOL</returns>
+    public override bool Equals(object? obj)
+    {
+        if (obj is null) return false;
+        if (ReferenceEquals(this, obj)) return true;
+        if (obj.GetType() != GetType()) return false;
+
+        return obj is FunctionCall functionCall
+               && Name == functionCall.Name
+               && Arguments == functionCall.Arguments;
     }
 }
 

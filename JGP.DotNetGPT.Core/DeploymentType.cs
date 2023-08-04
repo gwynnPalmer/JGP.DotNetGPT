@@ -1,4 +1,4 @@
-namespace JGP.DotNetGPT.Clients;
+namespace JGP.DotNetGPT.Core;
 
 /// <summary>
 ///     Enum deployment type
