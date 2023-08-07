@@ -1,6 +1,7 @@
-# README
+# DotNetGPT
 
 This README provides an overview and documentation for the `JGP.DotNetGPT` C# library.
+DotNetGPT is a C# library that provides a simple way to integrate OpenAI's GPT-3.5 Turbo into your .NET applications. It includes features like building chat requests, submitting prompts, appending system messages, handling functions, and more.
 
 ## ChatConstants
 
@@ -153,32 +154,88 @@ The `ChatClient` class implements the `IChatClient` interface and provides a cli
 - `SubmitAsync` - Submits a request model to the chat API and returns the response.
 - `SubmitFunctionResponseAsync` - Submits a function response to the chat API and returns the response.
 
-## Usage
+## Getting Started
 
-1. Create an instance of `ChatClient` using the `Create` method.
-2. Use the `AppendSystemMessage` method to add system messages.
-3. Use the `AppendFunction` and `RemoveFunction` methods to add or remove functions.
-4. Use the `SubmitAsync` method to send a message to the chat API and get the response.
-5. Use the `SubmitFunctionResponseAsync` method to send a function response to the chat API and get the response.
-
-Example usage:
+To get started with DotNetGPT, you can create a `ChatClient` instance using the `Create` method:
 
 ```csharp
-// Create a chat client
-var client = ChatClient.Create("API_KEY");
-
-// Append a system message
-client.AppendSystemMessage("Welcome!");
-
-// Submit a message to the chat API
-var response = await client.SubmitAsync("Hello");
-
-// Get the response text
-if (response.IsSuccess())
-{
-    var text = response.Choices[0].Message.Content;
-    Console.WriteLine(text);
-}
+var chatClient = ChatClient.Create("your-api-key");
 ```
 
+You can also specify the GPT model to use by passing it as a parameter:
+
+```csharp
+var chatClient = ChatClient.Create("your-api-key", "your-model");
+```
+
+You can then use the `ChatClient` instance to submit prompts and interact with the GPT model.
+
+## ChatClient
+
+The `ChatClient` class provides methods for submitting prompts, appending system messages, handling functions, and more. Here are some examples:
+
+### Submit a Prompt
+
+```csharp
+var prompt = "Hello, how are you?";
+var response = await chatClient.SubmitAsync(prompt);
+```
+
+### Append a System Message
+
+```csharp
+var systemMessage = "This is a system message.";
+chatClient.AppendSystemMessage(systemMessage);
+```
+
+### Handle Functions
+
+```csharp
+var function = new Function
+{
+    Name = "your-function",
+    Description = "Your function description",
+    Parameters = new Parameter
+    {
+        Type = "object",
+        Properties = new Dictionary<string, Property>
+        {
+            { "paramName", new Property { Type = "string", Description = "Parameter description" } }
+        }
+    }
+};
+
+chatClient.AppendFunction(function);
+
+// Submit a function response
+var functionName = "your-function";
+var functionResponse = "This is the response from the function.";
+var response = await chatClient.SubmitFunctionResponseAsync(functionName, functionResponse);
+```
+
+## FunctionHandlerFactory
+
+The `FunctionHandlerFactory` class provides a way to handle functions in your application. You can use it to register function handlers and execute them when a function is called. Here's an example:
+
+```csharp
+// Create a FunctionHandlerFactory instance
+var functionHandlerFactory = FunctionHandlerFactory.Create();
+
+// Register a function handler
+functionHandlerFactory.AddFunctionHandler("your-function", async (parameter) =>
+{
+    // Handle the function and return a response
+    // Parameter is the value passed to the function
+    return "This is the response from the function handler.";
+});
+
+// Execute the function handler
+var functionName = "your-function";
+var parameter = "parameter value";
+var response = await functionHandlerFactory.ExecuteFunctionHandlerAsync(functionName, parameter);
+```
+
+## Conclusion
+
+DotNetGPT provides a convenient way to integrate OpenAI's GPT-3.5 Turbo into your .NET applications. It simplifies the process of building chat requests, handling functions, and submitting prompts.
 Please refer to the individual class documentation for more information on the available methods and properties.

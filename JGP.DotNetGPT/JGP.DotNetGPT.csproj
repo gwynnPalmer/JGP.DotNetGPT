@@ -7,29 +7,24 @@
         <Description>Adds models and clients for use with the ChatGPT API</Description>
         <Authors>Joshua Gwynn-Palmer</Authors>
         <Copyright>Joshua Gwynn-Palmer</Copyright>
-        <Version>1.0.2</Version>
+        <Version>1.0.3</Version>
         <PackageId>JGP.DotNetGPT</PackageId>
         <PackageDescription>Adds models and clients for use with the ChatGPT API</PackageDescription>
         <RepositoryUrl>https://github.com/gwynnPalmer/JGP.DotNetGPT</RepositoryUrl>
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
         <PackageReadmeFile>.\README.md</PackageReadmeFile>
+        <PackageLicenseFile>.\LICENSE.txt</PackageLicenseFile>
     </PropertyGroup>
 
     <ItemGroup>
-        <Folder Include="Clients\"/>
-        <Folder Include="Models\"/>
-    </ItemGroup>
-
-    <ItemGroup>
-        <None Include="..\LICENSE" Pack="True" PackagePath="\" />
-        <None Include="..\README.md" Pack="True" PackagePath="\" />
+        <None Include="..\LICENSE.txt" Pack="True" PackagePath="\"/>
+        <None Include="..\README.md" Pack="True" PackagePath="\"/>
     </ItemGroup>
 
     <ItemGroup>
         <PackageReference Include="SharpToken" Version="1.2.2"/>
     </ItemGroup>
-
 
 
 </Project>

@@ -1,4 +1,4 @@
-namespace JGP.DotNetGPT;
+namespace JGP.DotNetGPT.Core.Constants;
 
 /// <summary>
 ///     Class chat constants

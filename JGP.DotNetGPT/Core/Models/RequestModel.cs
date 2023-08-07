@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
 
-namespace JGP.DotNetGPT.Models;
+namespace JGP.DotNetGPT.Core.Models;
 
 /// <summary>
 ///     Class request model
@@ -44,7 +44,7 @@ public class RequestModel
     {
         if (function == null) return;
 
-        Functions ??= new();
+        Functions ??= new List<Function>();
         Functions.Add(function);
         FunctionCall = functionCallValue;
     }
@@ -58,7 +58,7 @@ public class RequestModel
     {
         if (functions == null || functions.Count == 0) return;
 
-        Functions ??= new();
+        Functions ??= new List<Function>();
         Functions.AddRange(functions);
         FunctionCall = functionCallValue;
     }
@@ -89,6 +89,38 @@ public class Message
     /// <value>System.String</value>
     [JsonPropertyName("name")]
     public string? Name { get; set; }
+
+    /// <summary>
+    ///     Gets or sets the value of the function call
+    /// </summary>
+    /// <value>System.Nullable&lt;FunctionCall&gt;</value>
+    [JsonPropertyName("function_call")]
+    public FunctionCall? FunctionCall { get; set; }
+
+    /// <summary>
+    ///     Gets the value of the has function call
+    /// </summary>
+    /// <value>Interop+BOOL</value>
+    [JsonIgnore]
+    public bool HasFunctionCall => FunctionCall != null;
+
+    /// <summary>
+    ///     Describes whether this instance equals
+    /// </summary>
+    /// <param name="obj">The obj</param>
+    /// <returns>Interop+BOOL</returns>
+    public override bool Equals(object? obj)
+    {
+        if (obj is null) return false;
+        if (ReferenceEquals(this, obj)) return true;
+        if (obj.GetType() != GetType()) return false;
+
+        return obj is Message message
+               && Role == message.Role
+               && Content == message.Content
+               && Name == message.Name
+               && FunctionCall?.Equals(message.FunctionCall) == true;
+    }
 }
 
 /// <summary>
