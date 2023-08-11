@@ -111,6 +111,7 @@ public class ChatClient : IChatClient
     /// <param name="chatUrl">The base url</param>
     /// <param name="apiKey">The api key</param>
     /// <param name="model">The model</param>
+    /// <param name="deploymentType">The deployment type</param>
     private ChatClient(string chatUrl, string apiKey, string? model,
         DeploymentType deploymentType = DeploymentType.Direct)
     {
@@ -123,7 +124,6 @@ public class ChatClient : IChatClient
             : model;
 
         Context = new ChatContext(_model);
-
     }
 
     /// <summary>
@@ -248,11 +248,24 @@ public class ChatClient : IChatClient
     /// <returns>ChatClient</returns>
     public ChatClient AppendFunction(Function function)
     {
-        if (Functions.Count >= 3) return this;
-
         if (Functions.TrueForAll(x => !x.Name.Equals(function.Name, StringComparison.OrdinalIgnoreCase)))
         {
             Functions.Add(function);
+        }
+
+        return this;
+    }
+
+    /// <summary>
+    ///     Appends the functions using the specified functions
+    /// </summary>
+    /// <param name="functions">The functions</param>
+    /// <returns>ChatClient</returns>
+    public ChatClient AppendFunctions(List<Function> functions)
+    {
+        foreach (var function in functions)
+        {
+            AppendFunction(function);
         }
 
         return this;
