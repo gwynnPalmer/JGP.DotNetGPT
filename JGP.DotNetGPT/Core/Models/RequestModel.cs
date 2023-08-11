@@ -145,15 +145,15 @@ public class Function
     /// <summary>
     ///     Gets or sets the value of the parameters
     /// </summary>
-    /// <value>System.Reflection.Metadata.Parameter</value>
+    /// <value>Parameters</value>
     [JsonPropertyName("parameters")]
-    public Parameter? Parameters { get; set; }
+    public Parameters? Parameters { get; set; }
 }
 
 /// <summary>
 ///     Class parameter
 /// </summary>
-public class Parameter
+public class Parameters
 {
     /// <summary>
     ///     Gets or sets the value of the type

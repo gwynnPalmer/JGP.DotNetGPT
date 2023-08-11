@@ -114,15 +114,16 @@ public class ChatClient : IChatClient
     private ChatClient(string chatUrl, string apiKey, string? model,
         DeploymentType deploymentType = DeploymentType.Direct)
     {
-        _chatUrl = chatUrl;
         _apiKey = apiKey;
+        _chatUrl = chatUrl;
+        _deploymentType = deploymentType;
+
         _model = string.IsNullOrEmpty(model)
             ? ModelConstants.GPT35Turbo16k
             : model;
 
         Context = new ChatContext(_model);
 
-        _deploymentType = deploymentType;
     }
 
     /// <summary>
@@ -153,18 +154,6 @@ public class ChatClient : IChatClient
         Context.AppendMessage(systemMessage);
 
         return this;
-    }
-
-    /// <summary>
-    ///     Creates the api key
-    /// </summary>
-    /// <param name="apiKey">The api key</param>
-    /// <param name="model">The model</param>
-    /// <returns>ChatClient</returns>
-    [Obsolete("This method is deprecated, please use CreateDirectDeployment instead")]
-    public static ChatClient Create(string apiKey, string? model = null)
-    {
-        return new ChatClient("https://api.openai.com/v1/chat/completions", apiKey, model);
     }
 
     /// <summary>

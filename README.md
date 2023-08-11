@@ -237,5 +237,5 @@ var response = await functionHandlerFactory.ExecuteFunctionHandlerAsync(function
 
 ## Conclusion
 
-DotNetGPT provides a convenient way to integrate OpenAI's GPT-3.5 Turbo into your .NET applications. It simplifies the process of building chat requests, handling functions, and submitting prompts.
+DotNetGPT provides a convenient way to integrate OpenAI's GPT API Turbo into your .NET applications. It simplifies the process of building chat requests, handling functions, and submitting prompts.
 Please refer to the individual class documentation for more information on the available methods and properties.
